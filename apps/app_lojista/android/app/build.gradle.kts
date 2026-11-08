@@ -23,7 +23,7 @@ if (arquivoChave.exists()) {
 }
 
 android {
-    namespace = "com.cioapps.app_lojista"
+    namespace = "com.cioapps.cardapio"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         // Identidade do app na Play Store: NUNCA mude (senão vira outro app)
-        applicationId = "com.cioapps.app_lojista"
+        applicationId = "com.cioapps.cardapio"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

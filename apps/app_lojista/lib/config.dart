@@ -6,7 +6,7 @@ class Config {
   static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
   static const urlCardapio = String.fromEnvironment(
     'URL_CARDAPIO',
-    defaultValue: 'https://cardapio-online.pages.dev',
+    defaultValue: 'https://define.ia.br',
   );
 
   /// WhatsApp do suporte/vendas (só dígitos, com DDD). Aparece na tela de assinatura bloqueada.

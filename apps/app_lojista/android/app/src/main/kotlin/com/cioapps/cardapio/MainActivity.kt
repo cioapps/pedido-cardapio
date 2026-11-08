@@ -1,4 +1,4 @@
-package com.cioapps.app_lojista
+package com.cioapps.cardapio
 
 import io.flutter.embedding.android.FlutterActivity
 

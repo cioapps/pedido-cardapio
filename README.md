@@ -148,18 +148,22 @@ npm run dev
 
 O lojista não usa a web: todo o cadastro fica no app Android.
 
-### Deploy na Cloudflare Pages
+### Deploy na Cloudflare Pages (define.ia.br)
 
-1. Crie um projeto Pages conectado a este repositório (ou use `npm run deploy:web`).
-2. Configuração de build:
-   - Diretório raiz: `apps/web`
-   - Comando: `npm run build`
-   - Saída: `dist`
-3. Variáveis de ambiente (Production e Preview):
-   - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — usadas no build
-   - `SUPABASE_URL`, `SUPABASE_ANON_KEY` — usadas pela function `functions/[slug].ts`, que gera o
-     preview do link no WhatsApp (nome e logo da loja)
-4. No Supabase, em Authentication → URL Configuration, adicione o domínio da Cloudflare em **Site URL** e **Redirect URLs**.
+Projeto Pages **define-cardapio** (conta CioApps), domínio **https://define.ia.br** (e `www.define.ia.br`).
+O link de cada loja é `https://define.ia.br/<slug-da-loja>`.
+
+Publicar uma nova versão (na raiz, com `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` no `.env`):
+
+```bash
+npm run deploy:web
+```
+
+- O build usa `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` de `apps/web/.env.local`.
+- A function `functions/[slug].ts` (preview do link no WhatsApp com nome e logo da loja) usa `SUPABASE_URL` /
+  `SUPABASE_ANON_KEY` de `apps/web/wrangler.toml` (são públicas).
+- No Supabase, Authentication → URL Configuration já aponta para `https://define.ia.br/admin`.
+- Os registros DNS de `define.ia.br` e `www` são CNAME (com proxy) para `define-cardapio.pages.dev`.
 
 ## App do lojista (Flutter, Android)
 
@@ -185,7 +189,7 @@ que chama a Edge Function `notificar-pedido`, que envia push pelo Firebase com u
 só sem esse aviso.
 
 Configurar uma vez:
-1. Criar projeto no [Firebase](https://console.firebase.google.com) e adicionar um app Android com o pacote `com.cioapps.app_lojista`.
+1. Criar projeto no [Firebase](https://console.firebase.google.com) e adicionar um app Android com o pacote `com.cioapps.cardapio`.
 2. Baixar o `google-services.json` para `apps/app_lojista/android/app/` (fora do Git).
 3. Em Configurações do projeto → Contas de serviço → **Gerar nova chave privada** (JSON).
 4. Secrets da função: `FIREBASE_SERVICE_ACCOUNT` (conteúdo do JSON numa linha) e `PUSH_SEGREDO` (o mesmo valor gravado em
@@ -204,7 +208,7 @@ reconecta sozinho se a impressora tiver desligado para poupar bateria.
 O release é assinado com a chave de upload `D:\Desenvolvimento\CioApps\chaves\app_lojista.jks`
 (senha em `.env` da raiz e em `apps/app_lojista/android/key.properties`, ambos fora do Git).
 **Faça backup do `.jks` e da senha**: sem eles não é possível atualizar o app na loja.
-O `applicationId` `com.cioapps.app_lojista` nunca deve mudar.
+O `applicationId` `com.cioapps.cardapio` nunca deve mudar.
 
 ```bash
 cd apps/app_lojista && flutter build appbundle --release --dart-define-from-file=env.json

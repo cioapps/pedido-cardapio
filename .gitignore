@@ -26,3 +26,6 @@ apps/app_lojista/android/app/google-services.json
 # Saídas de build
 apps/app_lojista/android/build/
 apps/app_lojista/android/.gradle/
+
+# APKs gerados para enviar a testadores
+entregas/

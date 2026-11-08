@@ -1,11 +1,12 @@
-# Cloudflare Pages - cardápio online + painel
-# Deploy: npm run deploy  (ou conecte o repositório no painel da Cloudflare)
-name = "cardapio-online"
+# Cloudflare Pages - cardápio online (define.ia.br) + /admin
+# Deploy: npm run deploy:web  (na raiz; usa CLOUDFLARE_API_TOKEN e CLOUDFLARE_ACCOUNT_ID do .env)
+name = "define-cardapio"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-10-01"
 
-# Variáveis usadas pela Pages Function (functions/[slug].ts).
-# Configure no painel: Settings > Variables and Secrets
-#   SUPABASE_URL      = https://SEU-PROJETO.supabase.co
-#   SUPABASE_ANON_KEY = chave pública
-# E para o build do Vite: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY
+# Usadas pela Pages Function functions/[slug].ts (preview do link no WhatsApp).
+# São públicas (a mesma URL e chave publicável já vão no JavaScript do site).
+# O build do Vite usa VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY de apps/web/.env.local.
+[vars]
+SUPABASE_URL = "https://emqpjjiiugniwjmxzxhb.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_OPOou96mbPSCqcwx6XpeuQ_xJ-Q18b6"

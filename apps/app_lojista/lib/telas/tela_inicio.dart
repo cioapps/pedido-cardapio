@@ -17,14 +17,25 @@ class TelaInicio extends StatefulWidget {
   State<TelaInicio> createState() => _TelaInicioState();
 }
 
-class _TelaInicioState extends State<TelaInicio> {
+class _TelaInicioState extends State<TelaInicio> with WidgetsBindingObserver {
   final _servico = PedidosServico.instancia;
   bool? _temLoja;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _carregar();
+  }
+
+  /// Voltou para o app (ex.: depois de abrir o WhatsApp): busca pedidos na hora
+  /// e o alarme volta a tocar se tiver pedido novo esperando.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState estado) {
+    if (estado == AppLifecycleState.resumed && _temLoja == true) {
+      _servico.recarregar();
+      _servico.verificarAssinatura();
+    }
   }
 
   Future<void> _carregar() async {
@@ -41,6 +52,7 @@ class _TelaInicioState extends State<TelaInicio> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _servico.encerrar();
     WhatsappServico.instancia.encerrar();
     GestaoServico.instancia.limpar();
