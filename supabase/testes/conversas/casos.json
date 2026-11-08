@@ -1,0 +1,142 @@
+[
+  {
+    "nome": "pedido simples completo",
+    "conversa": [
+      { "de": "cliente", "texto": "boa noite! quero 2 x-bacon" },
+      { "de": "loja", "texto": "Boa noite! Qual pão? Temos hambúrguer, australiano e brioche. E o ponto da carne?" },
+      { "de": "cliente", "texto": "pão de hambúrguer mesmo, ao ponto" },
+      { "de": "cliente", "texto": "entrega na rua das acácias 45, centro. meu nome é joão" },
+      { "de": "loja", "texto": "Perfeito João! Pagamento?" },
+      { "de": "cliente", "texto": "pix" },
+      { "de": "loja", "texto": "Anotado! 2 X-Bacon, total com entrega R$ 60,80. Chega em 40 min" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "pedido_fechado": true,
+      "itens": [{ "produto": "X-Bacon", "quantidade": 2, "opcoes": ["Pão de hambúrguer", "Ao ponto"] }],
+      "bairro": "Centro",
+      "pagamento": "pix",
+      "nome": true
+    }
+  },
+  {
+    "nome": "adicionais e observação",
+    "conversa": [
+      { "de": "cliente", "texto": "oi, me ve um xburger no pão brioche bem passado com bacon e cheddar, sem tomate" },
+      { "de": "cliente", "texto": "e uma batata frita" },
+      { "de": "loja", "texto": "Certo! Endereço?" },
+      { "de": "cliente", "texto": "Av. Brasil 1200 apto 32, Vila Nova. Maria" },
+      { "de": "cliente", "texto": "vou pagar em dinheiro, troco pra 100" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "itens": [
+        { "produto": "X-Burger", "quantidade": 1, "opcoes": ["Pão brioche", "Bem passada", "Bacon", "Cheddar"], "observacao": true },
+        { "produto": "Batata frita", "quantidade": 1, "opcoes": [] }
+      ],
+      "bairro": "Vila Nova",
+      "pagamento": "dinheiro",
+      "troco": 100
+    }
+  },
+  {
+    "nome": "cliente muda de ideia",
+    "conversa": [
+      { "de": "cliente", "texto": "quero um x-tudo e uma coca" },
+      { "de": "loja", "texto": "X-Tudo em qual pão?" },
+      { "de": "cliente", "texto": "australiano. na verdade troca a coca por um suco" },
+      { "de": "cliente", "texto": "ah e coloca mais um x-tudo igual" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "itens": [
+        { "produto": "X-Tudo", "quantidade": 2, "opcoes": ["Pão australiano"] },
+        { "produto": "Suco natural", "quantidade": 1, "opcoes": [] }
+      ],
+      "pedido_fechado": false
+    }
+  },
+  {
+    "nome": "pedido por áudio",
+    "conversa": [
+      { "de": "cliente", "audio": "oi tudo bem quero pedir duas porções de onion rings e dois refrigerantes pra entregar no jardim américa rua sete número dez meu nome é carla vou pagar no cartão" },
+      { "de": "loja", "texto": "Oi Carla! Anotado, já já sai!" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "pedido_fechado": true,
+      "itens": [
+        { "produto": "Onion rings", "quantidade": 2, "opcoes": [] },
+        { "produto": "Refrigerante lata", "quantidade": 2, "opcoes": [] }
+      ],
+      "bairro": "Jardim América",
+      "pagamento": "cartao",
+      "nome": true
+    }
+  },
+  {
+    "nome": "lojista corrige o pedido",
+    "conversa": [
+      { "de": "cliente", "texto": "2 x-burger pão de hambúrguer ao ponto com ovo" },
+      { "de": "loja", "texto": "Acabou o ovo hoje 😕 posso colocar bacon no lugar?" },
+      { "de": "cliente", "texto": "pode sim" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "itens": [{ "produto": "X-Burger", "quantidade": 2, "opcoes": ["Pão de hambúrguer", "Ao ponto", "Bacon"] }]
+    }
+  },
+  {
+    "nome": "falta escolher opção obrigatória",
+    "conversa": [
+      { "de": "cliente", "texto": "quero um x-burger por favor" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "pedido_fechado": false,
+      "itens": [{ "produto": "X-Burger", "quantidade": 1, "opcoes": [] }],
+      "pendencia_contem": ["pão"]
+    }
+  },
+  {
+    "nome": "produto fora do cardápio",
+    "conversa": [
+      { "de": "cliente", "texto": "vocês tem pizza de calabresa? se tiver quero uma, e um refri" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "itens": [{ "produto": "Refrigerante lata", "quantidade": 1, "opcoes": [] }],
+      "pendencia_contem": ["pizza"]
+    }
+  },
+  {
+    "nome": "não é pedido",
+    "conversa": [
+      { "de": "cliente", "texto": "oi, vocês abrem domingo?" },
+      { "de": "loja", "texto": "Abrimos sim, das 18h às 23h!" },
+      { "de": "cliente", "texto": "obrigado" }
+    ],
+    "esperado": { "e_pedido": false, "itens": [] }
+  },
+  {
+    "nome": "fornecedor",
+    "conversa": [
+      { "de": "cliente", "texto": "Bom dia, aqui é da distribuidora. Amanhã entregamos 20kg de batata e 10 caixas de refrigerante" },
+      { "de": "loja", "texto": "Ok, pode trazer depois das 14h" }
+    ],
+    "esperado": { "e_pedido": false, "itens": [] }
+  },
+  {
+    "nome": "bairro não atendido",
+    "conversa": [
+      { "de": "cliente", "texto": "1 x-bacon pão australiano mal passada" },
+      { "de": "cliente", "texto": "entrega no bairro industrial, rua 5 numero 80" }
+    ],
+    "esperado": {
+      "e_pedido": true,
+      "itens": [{ "produto": "X-Bacon", "quantidade": 1, "opcoes": ["Pão australiano", "Mal passada"] }],
+      "bairro": null,
+      "pendencia_contem": ["bairro"]
+    }
+  }
+]

@@ -1,0 +1,395 @@
+{
+  "bairros": [
+    {
+      "id": 1,
+      "nome_bairro": "Centro",
+      "taxa_entrega": 5
+    },
+    {
+      "id": 2,
+      "nome_bairro": "Jardim América",
+      "taxa_entrega": 7
+    },
+    {
+      "id": 3,
+      "nome_bairro": "Vila Nova",
+      "taxa_entrega": 8
+    }
+  ],
+  "empresa": {
+    "id": 1,
+    "logo_url": null,
+    "loja_aberta": true,
+    "nome_empresa": "Lanche Exemplo",
+    "slug_empresa": "lanche-exemplo",
+    "cor_principal": "#E63946",
+    "pedido_minimo": 20,
+    "cardapio_ativo": true,
+    "endereco_empresa": "Rua das Flores, 100 - Centro",
+    "telefone_whatsapp": "5511999999999",
+    "tempo_entrega_minutos": 40
+  },
+  "horarios": [],
+  "categorias": [
+    {
+      "id": 1,
+      "produtos": [
+        {
+          "id": 1,
+          "grupos": [
+            {
+              "id": 1,
+              "opcoes": [
+                {
+                  "id": 1,
+                  "nome_opcao": "Pão de hambúrguer",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 2,
+                  "nome_opcao": "Pão australiano",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 3,
+                  "nome_opcao": "Pão brioche",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Escolha o pão",
+              "maximo_selecao": 1,
+              "minimo_selecao": 1
+            },
+            {
+              "id": 2,
+              "opcoes": [
+                {
+                  "id": 4,
+                  "nome_opcao": "Mal passada",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 5,
+                  "nome_opcao": "Ao ponto",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 6,
+                  "nome_opcao": "Bem passada",
+                  "preco_adicional": 0
+                }
+              ],
+              "nome_grupo": "Ponto da carne",
+              "maximo_selecao": 1,
+              "minimo_selecao": 1
+            },
+            {
+              "id": 3,
+              "opcoes": [
+                {
+                  "id": 7,
+                  "nome_opcao": "Bacon",
+                  "preco_adicional": 4
+                },
+                {
+                  "id": 8,
+                  "nome_opcao": "Cheddar",
+                  "preco_adicional": 3
+                },
+                {
+                  "id": 9,
+                  "nome_opcao": "Ovo",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 10,
+                  "nome_opcao": "Hambúrguer extra",
+                  "preco_adicional": 7
+                },
+                {
+                  "id": 11,
+                  "nome_opcao": "Cebola caramelizada",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Adicionais",
+              "maximo_selecao": 10,
+              "minimo_selecao": 0
+            },
+            {
+              "id": 4,
+              "opcoes": [
+                {
+                  "id": 12,
+                  "nome_opcao": "Maionese da casa",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 13,
+                  "nome_opcao": "Barbecue",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 14,
+                  "nome_opcao": "Cheddar cremoso",
+                  "preco_adicional": 2
+                }
+              ],
+              "nome_grupo": "Molho",
+              "maximo_selecao": 2,
+              "minimo_selecao": 0
+            }
+          ],
+          "foto_url": null,
+          "nome_produto": "X-Burger",
+          "preco_produto": 22.9,
+          "descricao_produto": "Hambúrguer 150g, queijo, alface e tomate"
+        },
+        {
+          "id": 2,
+          "grupos": [
+            {
+              "id": 1,
+              "opcoes": [
+                {
+                  "id": 1,
+                  "nome_opcao": "Pão de hambúrguer",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 2,
+                  "nome_opcao": "Pão australiano",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 3,
+                  "nome_opcao": "Pão brioche",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Escolha o pão",
+              "maximo_selecao": 1,
+              "minimo_selecao": 1
+            },
+            {
+              "id": 2,
+              "opcoes": [
+                {
+                  "id": 4,
+                  "nome_opcao": "Mal passada",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 5,
+                  "nome_opcao": "Ao ponto",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 6,
+                  "nome_opcao": "Bem passada",
+                  "preco_adicional": 0
+                }
+              ],
+              "nome_grupo": "Ponto da carne",
+              "maximo_selecao": 1,
+              "minimo_selecao": 1
+            },
+            {
+              "id": 3,
+              "opcoes": [
+                {
+                  "id": 7,
+                  "nome_opcao": "Bacon",
+                  "preco_adicional": 4
+                },
+                {
+                  "id": 8,
+                  "nome_opcao": "Cheddar",
+                  "preco_adicional": 3
+                },
+                {
+                  "id": 9,
+                  "nome_opcao": "Ovo",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 10,
+                  "nome_opcao": "Hambúrguer extra",
+                  "preco_adicional": 7
+                },
+                {
+                  "id": 11,
+                  "nome_opcao": "Cebola caramelizada",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Adicionais",
+              "maximo_selecao": 10,
+              "minimo_selecao": 0
+            },
+            {
+              "id": 4,
+              "opcoes": [
+                {
+                  "id": 12,
+                  "nome_opcao": "Maionese da casa",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 13,
+                  "nome_opcao": "Barbecue",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 14,
+                  "nome_opcao": "Cheddar cremoso",
+                  "preco_adicional": 2
+                }
+              ],
+              "nome_grupo": "Molho",
+              "maximo_selecao": 2,
+              "minimo_selecao": 0
+            }
+          ],
+          "foto_url": null,
+          "nome_produto": "X-Bacon",
+          "preco_produto": 27.9,
+          "descricao_produto": "Hambúrguer 150g, bacon crocante, queijo e salada"
+        },
+        {
+          "id": 3,
+          "grupos": [
+            {
+              "id": 1,
+              "opcoes": [
+                {
+                  "id": 1,
+                  "nome_opcao": "Pão de hambúrguer",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 2,
+                  "nome_opcao": "Pão australiano",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 3,
+                  "nome_opcao": "Pão brioche",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Escolha o pão",
+              "maximo_selecao": 1,
+              "minimo_selecao": 1
+            },
+            {
+              "id": 3,
+              "opcoes": [
+                {
+                  "id": 7,
+                  "nome_opcao": "Bacon",
+                  "preco_adicional": 4
+                },
+                {
+                  "id": 8,
+                  "nome_opcao": "Cheddar",
+                  "preco_adicional": 3
+                },
+                {
+                  "id": 9,
+                  "nome_opcao": "Ovo",
+                  "preco_adicional": 2
+                },
+                {
+                  "id": 10,
+                  "nome_opcao": "Hambúrguer extra",
+                  "preco_adicional": 7
+                },
+                {
+                  "id": 11,
+                  "nome_opcao": "Cebola caramelizada",
+                  "preco_adicional": 3
+                }
+              ],
+              "nome_grupo": "Adicionais",
+              "maximo_selecao": 10,
+              "minimo_selecao": 0
+            },
+            {
+              "id": 4,
+              "opcoes": [
+                {
+                  "id": 12,
+                  "nome_opcao": "Maionese da casa",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 13,
+                  "nome_opcao": "Barbecue",
+                  "preco_adicional": 0
+                },
+                {
+                  "id": 14,
+                  "nome_opcao": "Cheddar cremoso",
+                  "preco_adicional": 2
+                }
+              ],
+              "nome_grupo": "Molho",
+              "maximo_selecao": 2,
+              "minimo_selecao": 0
+            }
+          ],
+          "foto_url": null,
+          "nome_produto": "X-Tudo",
+          "preco_produto": 34.9,
+          "descricao_produto": "Dois hambúrgueres, bacon, ovo, presunto, queijo e salada"
+        }
+      ],
+      "nome_categoria": "Lanches"
+    },
+    {
+      "id": 2,
+      "produtos": [
+        {
+          "id": 4,
+          "grupos": [],
+          "foto_url": null,
+          "nome_produto": "Batata frita",
+          "preco_produto": 19.9,
+          "descricao_produto": "Porção 400g"
+        },
+        {
+          "id": 5,
+          "grupos": [],
+          "foto_url": null,
+          "nome_produto": "Onion rings",
+          "preco_produto": 21.9,
+          "descricao_produto": "Porção 300g"
+        }
+      ],
+      "nome_categoria": "Porções"
+    },
+    {
+      "id": 3,
+      "produtos": [
+        {
+          "id": 6,
+          "grupos": [],
+          "foto_url": null,
+          "nome_produto": "Refrigerante lata",
+          "preco_produto": 6,
+          "descricao_produto": "350ml"
+        },
+        {
+          "id": 7,
+          "grupos": [],
+          "foto_url": null,
+          "nome_produto": "Suco natural",
+          "preco_produto": 9,
+          "descricao_produto": "500ml"
+        }
+      ],
+      "nome_categoria": "Bebidas"
+    }
+  ]
+}

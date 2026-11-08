@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Bricolage Grotesque", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+:root {
+  --cor-loja: #e63946;
+  --fundo: #f2f3f5;
+  --tinta: #16181d;
+}
+
+html,
+body {
+  background: var(--fundo);
+  color: var(--tinta);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@utility bg-loja {
+  background-color: var(--cor-loja);
+}
+/* tons derivados calculados onde a cor da loja é definida (não no :root) */
+@utility bg-loja-suave {
+  background-color: color-mix(in srgb, var(--cor-loja) 9%, white);
+}
+@utility text-loja {
+  color: var(--cor-loja);
+}
+@utility text-loja-escura {
+  color: color-mix(in srgb, var(--cor-loja) 78%, black);
+}
+@utility border-loja {
+  border-color: var(--cor-loja);
+}
+@utility accent-loja {
+  accent-color: var(--cor-loja);
+}
+@utility ring-loja {
+  --tw-ring-color: var(--cor-loja);
+}
+
+@layer components {
+  .campo {
+    @apply w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-3 text-base outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10;
+  }
+  .rotulo {
+    @apply mb-1 block text-sm font-medium text-zinc-700;
+  }
+  .botao {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-[15px] font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .botao-primario {
+    @apply bg-zinc-900 text-white hover:bg-zinc-800;
+  }
+  .botao-secundario {
+    @apply border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50;
+  }
+  .botao-perigo {
+    @apply text-red-600 hover:bg-red-50;
+  }
+  .cartao {
+    @apply rounded-2xl border border-zinc-200/80 bg-white;
+  }
+  .botao-loja {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-[15px] font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 bg-loja text-[var(--sobre-loja,#fff)] shadow-[0_6px_20px_-8px_var(--cor-loja)] hover:brightness-105;
+  }
+  /* borda picotada do cupom (comanda) */
+  .picote {
+    --dente: 12px;
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - var(--dente) + 1px) no-repeat,
+      radial-gradient(circle at 50% 100%, transparent calc(var(--dente) / 2), #000 calc(var(--dente) / 2 + 0.5px))
+        bottom / var(--dente) var(--dente) repeat-x;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--cor-loja);
+  outline-offset: 2px;
+}
+
+@keyframes subir {
+  from {
+    transform: translateY(32px);
+    opacity: 0.5;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes surgir {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes imprimir {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-12px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+@keyframes pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

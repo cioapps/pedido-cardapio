@@ -1,0 +1,14 @@
+# Configuração da Supabase CLI (supabase link / functions deploy)
+project_id = "cardapio-online"
+
+# O webhook é chamado pela uazapiGO (sem login do Supabase).
+# A segurança vem do segredo na URL + conferência do token da instância.
+[functions.whatsapp-webhook]
+verify_jwt = false
+
+[functions.whatsapp-conexao]
+verify_jwt = true
+
+# Chamada pelo banco (pg_net) com o segredo PUSH_SEGREDO no cabeçalho x-segredo.
+[functions.notificar-pedido]
+verify_jwt = false

@@ -1,0 +1,25 @@
+{
+  "name": "cardapio-online",
+  "private": true,
+  "description": "Cardápio online multiempresa: web (Cloudflare Pages) + app do lojista (Flutter) + Supabase",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @cardapio/web",
+    "build": "npm run build -w @cardapio/web",
+    "lint": "npm run lint -w @cardapio/web",
+    "deploy:web": "npm run deploy -w @cardapio/web",
+    "app:run": "cd apps/app_lojista && flutter run --dart-define-from-file=env.json",
+    "app:apk": "cd apps/app_lojista && flutter build apk --release --dart-define-from-file=env.json",
+    "test:db": "node supabase/testes/testar_banco.mjs",
+    "test:ia": "cd supabase/functions && deno test --no-lock _compartilhado/",
+    "check:functions": "cd supabase/functions && deno check --no-lock whatsapp-webhook/index.ts whatsapp-conexao/index.ts && deno lint",
+    "avaliar:ia": "cd supabase/functions && deno run --allow-env --allow-net --allow-read ../testes/avaliar_ia.ts",
+    "test": "npm run test:db && npm run test:ia"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.16",
+    "deno": "^2.9.6"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/index.css"
+        ],
+        "createdAt": "2026-11-07T01:41:56.683Z",
+        "reason": "Claude: false positive, .botao-secundario has bg-white with text-zinc-800 (dark on white)"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/painel/PaginaOpcoes.tsx"
+        ],
+        "createdAt": "2026-11-07T01:47:41.734Z",
+        "reason": "Claude: false positive, gray icon on white that turns red-600 only on hover:bg-red-50"
+      }
+    ]
+  }
+}

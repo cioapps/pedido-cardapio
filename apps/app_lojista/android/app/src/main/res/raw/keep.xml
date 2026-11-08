@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- impede que o build de release remova o som usado pelas notificações -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@raw/alerta_longo" />

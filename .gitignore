@@ -1,0 +1,28 @@
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Segredos
+.env
+.env.local
+.env.*.local
+env.json
+
+# Node
+node_modules/
+
+# Supabase CLI local
+supabase/.temp/
+supabase/.branches/
+
+# Secrets das Edge Functions
+supabase/functions/.env
+
+# Firebase (push)
+apps/app_lojista/android/app/google-services.json
+*firebase-adminsdk*.json
+
+# Saídas de build
+apps/app_lojista/android/build/
+apps/app_lojista/android/.gradle/
