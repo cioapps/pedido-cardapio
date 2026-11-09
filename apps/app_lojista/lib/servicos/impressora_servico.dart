@@ -111,8 +111,7 @@ class ImpressoraServico {
       // régua: deve caber numa linha só (32 colunas no 58 mm, 48 no 80 mm)
       ...g.text(config.papel58mm ? '1234567890' * 3 + '12' : '1234567890' * 4 + '12345678'),
       ...g.text('PEDIDO #123', styles: const PosStyles(align: PosAlign.center, bold: true, height: PosTextSize.size2, width: PosTextSize.size2)),
-      ...g.feed(3),
-      ...g.cut(),
+      ..._final(g),
     ];
     await _enviar(b);
   }
@@ -122,68 +121,107 @@ class ImpressoraServico {
     return Generator(config.papel58mm ? PaperSize.mm58 : PaperSize.mm80, perfil);
   }
 
-  /// Cupom da cozinha: número grande, itens em destaque, observações e entrega
+  /// Fim do cupom. As portáteis de 58 mm não têm guilhotina: só avança o papel até a serrilha.
+  /// (g.cut() já avança 5 linhas sozinho; somar feed + cut desperdiçava papel.)
+  List<int> _final(Generator g) => config.papel58mm ? g.feed(2) : g.cut();
+
+  /// Cupom pensado para o motoboy e a cozinha (pedido do 1º cliente real):
+  /// endereço logo no topo, observação do cliente em destaque e troco já calculado.
   Future<List<int>> gerarCupom(Pedido p, String nomeEmpresa) async {
     final g = await _gerador();
-    String t(String s) => semAcentos(s);
+    String t(String s) => semAcentos(s).trim();
+    final colunas = config.papel58mm ? 32 : 48;
+    final linha = g.text('-' * colunas);
     const centro = PosStyles(align: PosAlign.center);
-    const grande = PosStyles(align: PosAlign.center, bold: true, height: PosTextSize.size2, width: PosTextSize.size2);
-    const itemEstilo = PosStyles(bold: true, height: PosTextSize.size2);
-    final linha = config.papel58mm ? '-' * 32 : '-' * 48;
+    const negrito = PosStyles(bold: true);
+    const titulo = PosStyles(bold: true, height: PosTextSize.size2, width: PosTextSize.size2);
+    const tituloCentro = PosStyles(align: PosAlign.center, bold: true, height: PosTextSize.size2, width: PosTextSize.size2);
+    const alto = PosStyles(bold: true, height: PosTextSize.size2);
+    bool tem(String? v) => v != null && v.trim().isNotEmpty;
 
     final b = <int>[
       ...g.reset(),
-      ...g.text(t(nomeEmpresa), styles: const PosStyles(align: PosAlign.center, bold: true)),
-      ...g.text('PEDIDO #${p.numeroPedido}', styles: grande),
-      ...g.text(formatarDataHora(p.criadoEm), styles: centro),
-      ...g.text(linha),
+      ...g.text(t(nomeEmpresa).toUpperCase(), styles: const PosStyles(align: PosAlign.center, bold: true)),
+      ...g.text('PEDIDO #${p.numeroPedido}', styles: tituloCentro),
+      ...g.text('${formatarDataHora(p.criadoEm)}${p.origemPedido == 'whatsapp' ? ' - WhatsApp' : ''}', styles: centro),
+      ...linha,
+
+      // ---- ENTREGA (primeiro, para o motoboy) ----
+      ...g.text('ENTREGA', styles: titulo),
+      ...g.text(t('${p.logradouro}, ${p.numeroEndereco}'), styles: alto),
+      if (tem(p.complemento)) ...g.text(t('Comp: ${p.complemento}'), styles: negrito),
+      ...g.text(t('Bairro: ${p.nomeBairro}'), styles: negrito),
+      if (tem(p.pontoReferencia)) ...g.text(t('Ref: ${p.pontoReferencia}')),
+      ...g.text(t('Cliente: ${p.nomeCliente}'), styles: negrito),
+      ...g.text('Tel: ${formatarTelefone(p.telefoneCliente)}'),
     ];
 
+    // ---- OBSERVAÇÃO DO CLIENTE (simples, em negrito) ----
+    if (tem(p.observacaoPedido)) {
+      b.addAll(g.text(t('OBS: ${p.observacaoPedido}'), styles: negrito));
+    }
+
+    // ---- ITENS ----
+    b.addAll([...linha, ...g.text('ITENS', styles: titulo)]);
     for (final item in p.itens) {
-      b.addAll(g.text(t('${item.quantidade}x ${item.nomeProduto}'), styles: itemEstilo));
+      b.addAll(g.row([
+        PosColumn(text: t('${item.quantidade}x ${item.nomeProduto}'), width: 8, styles: negrito),
+        PosColumn(text: formatarMoedaSimples(item.valorTotalItem), width: 4, styles: const PosStyles(align: PosAlign.right)),
+      ]));
       for (final o in item.opcoes) {
-        b.addAll(g.text(t('   ${o.nomeGrupo}: ${o.descricao}')));
+        b.addAll(g.text(t('  + ${o.descricao}${o.nomeGrupo.isEmpty ? '' : ' (${o.nomeGrupo})'}')));
       }
-      if (item.observacaoItem != null && item.observacaoItem!.isNotEmpty) {
-        b.addAll(g.text(t('   OBS: ${item.observacaoItem}'), styles: const PosStyles(bold: true)));
+      if (tem(item.observacaoItem)) {
+        b.addAll(g.text(t('  OBS: ${item.observacaoItem}'), styles: negrito));
       }
-      b.addAll(g.text(formatarMoedaSimples(item.valorTotalItem), styles: const PosStyles(align: PosAlign.right)));
     }
 
-    if (p.observacaoPedido != null && p.observacaoPedido!.isNotEmpty) {
-      b.addAll(g.text(linha));
-      b.addAll(g.text(t('OBS DO PEDIDO: ${p.observacaoPedido}'), styles: const PosStyles(bold: true)));
-    }
-
+    // ---- VALORES ----
     b.addAll([
-      ...g.text(linha),
-      ...g.text(t('Cliente: ${p.nomeCliente}'), styles: const PosStyles(bold: true)),
-      ...g.text('Tel: ${formatarTelefone(p.telefoneCliente)}'),
-      ...g.text(t(p.enderecoCompleto)),
-      ...g.text(t('Bairro: ${p.nomeBairro}'), styles: const PosStyles(bold: true)),
-      if (p.pontoReferencia != null && p.pontoReferencia!.isNotEmpty) ...g.text(t('Ref: ${p.pontoReferencia}')),
-      ...g.text(linha),
+      ...linha,
       ..._linhaValor(g, 'Subtotal', p.subtotal),
       ..._linhaValor(g, 'Entrega', p.taxaEntrega),
-      ..._linhaValor(g, 'TOTAL', p.valorTotal, negrito: true),
-      ...g.text(t('Pagamento: ${nomesPagamento[p.formaPagamento] ?? p.formaPagamento}'),
-          styles: const PosStyles(bold: true)),
-      if (p.trocoPara != null) ...[
-        ...g.text('Troco para: ${formatarMoedaSimples(p.trocoPara!)}'),
-        ...g.text('Levar troco: ${formatarMoedaSimples(p.trocoPara! - p.valorTotal)}',
-            styles: const PosStyles(bold: true)),
-      ],
-      ...g.feed(3),
-      ...g.cut(),
+      ...g.row([
+        PosColumn(text: 'TOTAL', width: 5, styles: alto),
+        PosColumn(text: formatarMoedaSimples(p.valorTotal), width: 7, styles: const PosStyles(align: PosAlign.right, bold: true, height: PosTextSize.size2)),
+      ]),
+      ...linha,
     ]);
+
+    // ---- PAGAMENTO (o que o motoboy precisa fazer) ----
+    switch (p.formaPagamento) {
+      case 'dinheiro':
+        b.addAll(g.text('PAGAMENTO: DINHEIRO', styles: negrito));
+        if (p.trocoPara != null && p.trocoPara! > p.valorTotal) {
+          b.addAll([
+            ..._linhaValor(g, 'Cliente paga com', p.trocoPara!),
+            ...g.text('LEVAR DE TROCO:', styles: negrito),
+            ...g.text(formatarMoedaSimples(p.trocoPara! - p.valorTotal), styles: tituloCentro),
+          ]);
+        } else {
+          b.addAll(g.text('Sem troco', styles: negrito));
+        }
+      case 'cartao':
+        b.addAll([
+          ...g.text('PAGAMENTO: CARTAO', styles: negrito),
+          ...g.text('LEVAR MAQUININHA', styles: tituloCentro),
+        ]);
+      default:
+        b.addAll([
+          ...g.text(t('PAGAMENTO: ${(nomesPagamento[p.formaPagamento] ?? p.formaPagamento).toUpperCase()}'), styles: negrito),
+          ...g.text('Cobrar ${formatarMoedaSimples(p.valorTotal)} na entrega'),
+        ]);
+    }
+
+    b.addAll([...linha, ...g.text('Pedido #${p.numeroPedido}', styles: centro), ..._final(g)]);
     return b;
   }
 
   List<int> _linhaValor(Generator g, String rotulo, double valor, {bool negrito = false}) => g.row([
-        PosColumn(text: rotulo, width: 6, styles: PosStyles(bold: negrito)),
+        PosColumn(text: rotulo, width: 7, styles: PosStyles(bold: negrito)),
         PosColumn(
           text: formatarMoedaSimples(valor),
-          width: 6,
+          width: 5,
           styles: PosStyles(align: PosAlign.right, bold: negrito),
         ),
       ]);

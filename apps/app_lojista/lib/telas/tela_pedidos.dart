@@ -366,8 +366,9 @@ class _CartaoPedidoState extends State<_CartaoPedido> {
     final etapa = p.proximaEtapa;
     final acao = _acaoDoStatus(p.statusPedido);
     final atrasado = !p.finalizado && minutos >= 40;
-    final pagamento = p.formaPagamento == 'dinheiro' && p.trocoPara != null
-        ? 'Dinheiro · troco p/ ${formatarMoeda(p.trocoPara).replaceAll(',00', '')}'
+    // troco já calculado (pedido do 1º cliente real)
+    final pagamento = p.formaPagamento == 'dinheiro' && p.trocoPara != null && p.trocoPara! > p.valorTotal
+        ? 'Dinheiro · levar troco ${formatarMoeda(p.trocoPara! - p.valorTotal)}'
         : nomesPagamento[p.formaPagamento] ?? p.formaPagamento;
     final itens = p.itens.take(4).toList();
 
