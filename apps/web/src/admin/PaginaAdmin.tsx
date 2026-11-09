@@ -1,8 +1,10 @@
 import type { Session } from '@supabase/supabase-js'
 import { useCallback, useEffect, useState } from 'react'
-import { formatarDataHora, formatarTelefone } from '../lib/formatar'
+import { formatarDataHora, formatarMoeda, formatarTelefone } from '../lib/formatar'
 import { mensagemErro, supabase } from '../lib/supabase'
 import { Entrar, Interruptor } from './Entrar'
+import { desdeUltimoPedido } from './tempo'
+import { FeedPedidos, ResumoUso, type UsoLoja } from './Uso'
 
 interface LojaAdmin {
   id: number
@@ -64,18 +66,55 @@ export default function PaginaAdmin() {
       </div>
     )
   }
-  return <ListaLojas />
+  return <Painel />
 }
 
-function ListaLojas() {
+type Aba = 'lojas' | 'pedidos'
+
+function Painel() {
+  const [aba, setAba] = useState<Aba>('lojas')
+  const [lojaFeed, setLojaFeed] = useState<number | null>(null)
+  const verPedidos = (id: number) => {
+    setLojaFeed(id)
+    setAba('pedidos')
+  }
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-6">
+      <div className="mb-5 flex items-center gap-3">
+        <nav className="flex flex-1 gap-1" aria-label="Seções">
+          {(['lojas', 'pedidos'] as const).map((a) => (
+            <button
+              key={a}
+              type="button"
+              aria-current={aba === a ? 'page' : undefined}
+              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${aba === a ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100'}`}
+              onClick={() => setAba(a)}
+            >
+              {a === 'lojas' ? 'Lojas' : 'Pedidos chegando'}
+            </button>
+          ))}
+        </nav>
+        <button type="button" className="botao botao-secundario px-3 py-1.5 text-sm" onClick={() => supabase.auth.signOut()}>
+          Sair
+        </button>
+      </div>
+      {aba === 'lojas' ? <ListaLojas aoVerPedidos={verPedidos} /> : <FeedPedidos key={lojaFeed ?? 'todas'} idLoja={lojaFeed} aoMudarLoja={setLojaFeed} />}
+    </div>
+  )
+}
+
+function ListaLojas({ aoVerPedidos }: { aoVerPedidos: (id: number) => void }) {
   const [lojas, setLojas] = useState<LojaAdmin[]>([])
+  const [uso, setUso] = useState<Map<number, UsoLoja>>(new Map())
   const [busca, setBusca] = useState('')
   const [erro, setErro] = useState<string | null>(null)
 
   const carregar = useCallback(async () => {
-    const { data, error } = await supabase.rpc('listar_empresas_admin')
-    if (error) return setErro(mensagemErro(error))
-    setLojas((data as LojaAdmin[]) ?? [])
+    const [r, u] = await Promise.all([supabase.rpc('listar_empresas_admin'), supabase.rpc('uso_empresas_admin')])
+    if (r.error) return setErro(mensagemErro(r.error))
+    setLojas((r.data as LojaAdmin[]) ?? [])
+    // se a função de uso falhar, a lista de lojas continua funcionando
+    if (!u.error) setUso(new Map(((u.data as UsoLoja[]) ?? []).map((x) => [Number(x.id_empresa), x])))
   }, [])
 
   useEffect(() => {
@@ -120,21 +159,20 @@ function ListaLojas() {
   )
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div>
+      <ResumoUso uso={[...uso.values()]} totalLojas={lojas.length} />
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <h1 className="flex-1 text-xl font-bold">Lojas ({lojas.length})</h1>
         <input className="campo max-w-xs" placeholder="Buscar loja ou e-mail" value={busca} onChange={(e) => setBusca(e.target.value)} />
-        <button type="button" className="botao botao-secundario" onClick={() => supabase.auth.signOut()}>
-          Sair
-        </button>
       </div>
       {erro && <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{erro}</p>}
 
       <div className="cartao overflow-x-auto">
-        <table className="w-full min-w-[900px] text-left text-sm">
+        <table className="w-full min-w-[1040px] text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-600">
             <tr>
               <th className="px-3 py-2 font-medium">Loja</th>
+              <th className="px-3 py-2 font-medium">Uso</th>
               <th className="px-3 py-2 font-medium">Assinatura</th>
               <th className="px-3 py-2 text-center font-medium">Cardápio online</th>
               <th className="px-3 py-2 text-center font-medium">WhatsApp com IA</th>
@@ -152,6 +190,9 @@ function ListaLojas() {
                   <p className="text-xs text-zinc-500">
                     {l.email_dono ?? 'sem dono'} · criada {formatarDataHora(l.criado_em)}
                   </p>
+                </td>
+                <td className="px-3 py-2.5">
+                  <CelulaUso uso={uso.get(l.id)} aoVerPedidos={() => aoVerPedidos(l.id)} />
                 </td>
                 <td className="px-3 py-2.5">
                   <p className={`font-medium ${l.assinatura_liberada ? 'text-emerald-700' : 'text-red-700'}`}>
@@ -204,6 +245,34 @@ function ListaLojas() {
           </tbody>
         </table>
       </div>
+    </div>
+  )
+}
+
+function CelulaUso({ uso, aoVerPedidos }: { uso: UsoLoja | undefined; aoVerPedidos: () => void }) {
+  if (!uso) return <span className="text-zinc-400">—</span>
+  const ultimo = desdeUltimoPedido(uso.ultimo_pedido_em)
+  return (
+    <div className="min-w-[170px]">
+      <p>
+        <span className="text-base font-semibold tabular-nums">{uso.pedidos_7d}</span>{' '}
+        <span className="text-zinc-500">{uso.pedidos_7d === 1 ? 'pedido' : 'pedidos'} em 7 dias</span>
+      </p>
+      <p className="text-xs text-zinc-500 tabular-nums">
+        hoje {uso.pedidos_hoje} · 30 dias {uso.pedidos_30d} · {formatarMoeda(uso.faturamento_30d)}
+      </p>
+      {uso.pedidos_30d > 0 && (
+        <p className="text-xs text-zinc-500 tabular-nums">
+          cardápio {uso.pedidos_cardapio_30d} · WhatsApp {uso.pedidos_whatsapp_30d}
+          {uso.cancelados_30d > 0 ? ` · ${uso.cancelados_30d} cancel.` : ''}
+        </p>
+      )}
+      <p className={`mt-0.5 text-xs font-medium ${ultimo.cor}`}>{ultimo.texto}</p>
+      {uso.ultimo_pedido_em && (
+        <button type="button" className="mt-1 text-xs font-medium text-zinc-700 underline underline-offset-2 hover:text-zinc-900" onClick={aoVerPedidos}>
+          Ver pedidos
+        </button>
+      )}
     </div>
   )
 }
