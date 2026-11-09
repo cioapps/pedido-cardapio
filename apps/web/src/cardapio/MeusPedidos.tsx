@@ -26,32 +26,19 @@ export function FolhaMeusPedidos({
   aberta,
   aoFechar,
   pedidos,
-  slugAtual,
 }: {
   aberta: boolean
   aoFechar: () => void
   pedidos: PedidoComStatus[]
-  slugAtual: string
 }) {
-  const desta = pedidos.filter((p) => p.slug === slugAtual)
-  const outras = pedidos.filter((p) => p.slug !== slugAtual)
-
   return (
     <Folha aberta={aberta} aoFechar={aoFechar} titulo="Meus pedidos">
       <div className="px-5 pb-6">
-        <p className="text-sm text-zinc-500">Pedidos feitos neste celular.</p>
+        <p className="text-sm text-zinc-500">Seus pedidos nesta loja.</p>
         {pedidos.length === 0 ? (
           <p className="py-10 text-center text-zinc-500">Quando você fizer um pedido, ele aparece aqui.</p>
         ) : (
-          <>
-            <ListaPedidos pedidos={desta} aoAbrir={aoFechar} />
-            {outras.length > 0 && (
-              <>
-                <h3 className="mt-6 text-xs font-semibold uppercase tracking-wider text-zinc-400">Outras lojas</h3>
-                <ListaPedidos pedidos={outras} aoAbrir={aoFechar} mostrarLoja />
-              </>
-            )}
-          </>
+          <ListaPedidos pedidos={pedidos} aoAbrir={aoFechar} />
         )}
       </div>
     </Folha>
@@ -61,11 +48,9 @@ export function FolhaMeusPedidos({
 function ListaPedidos({
   pedidos,
   aoAbrir,
-  mostrarLoja = false,
 }: {
   pedidos: PedidoComStatus[]
   aoAbrir: () => void
-  mostrarLoja?: boolean
 }) {
   if (pedidos.length === 0) return null
   return (
@@ -85,7 +70,7 @@ function ListaPedidos({
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate font-semibold">
-                {mostrarLoja ? p.nome_empresa : `Pedido #${p.numero_pedido}`}
+                Pedido #{p.numero_pedido}
               </span>
               <span className="block text-sm text-zinc-500">
                 {formatarDataHora(p.criado_em)} · {formatarMoeda(p.valor_total)}

@@ -141,7 +141,7 @@ const temPrecoVariavel = (p: ProdutoCardapio) =>
 function ConteudoCardapio({ cardapio }: { cardapio: Cardapio }) {
   const { empresa, categorias, horarios } = cardapio
   const carrinho = useCarrinho(empresa.slug_empresa)
-  const pedidos = usePedidosSalvos()
+  const pedidos = usePedidosSalvos(empresa.slug_empresa)
   const [produtoAberto, setProdutoAberto] = useState<ProdutoCardapio | null>(null)
   const [checkoutAberto, setCheckoutAberto] = useState(false)
   const [pedidosAberto, setPedidosAberto] = useState(false)
@@ -149,7 +149,7 @@ function ConteudoCardapio({ cardapio }: { cardapio: Cardapio }) {
   const [categoriaAtiva, setCategoriaAtiva] = useState<number | null>(categorias[0]?.id ?? null)
   const [adicionado, setAdicionado] = useState(0)
 
-  const emAndamento = pedidos.filter((p) => p.slug === empresa.slug_empresa && pedidoEmAndamento(p))
+  const emAndamento = pedidos.filter(pedidoEmAndamento)
 
   const categoriasFiltradas = useMemo(() => {
     const termo = busca.trim().toLowerCase()
@@ -430,7 +430,6 @@ function ConteudoCardapio({ cardapio }: { cardapio: Cardapio }) {
         aberta={pedidosAberto}
         aoFechar={() => setPedidosAberto(false)}
         pedidos={pedidos}
-        slugAtual={empresa.slug_empresa}
       />
     </div>
   )

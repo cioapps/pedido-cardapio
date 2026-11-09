@@ -14,17 +14,17 @@ export const pedidoEmAndamento = (p: PedidoComStatus) =>
   !!p.status && !FINALIZADOS.includes(p.status)
 
 /**
- * Pedidos feitos neste aparelho. Busca o status só dos das últimas 24h
+ * Pedidos feitos neste aparelho nesta loja (slug). Busca o status só dos das últimas 24h
  * (no máximo 5), atualizando a cada 30s enquanto algum estiver em andamento.
  */
-export function usePedidosSalvos() {
-  const [pedidos, setPedidos] = useState<PedidoComStatus[]>(() => listarPedidos())
+export function usePedidosSalvos(slug: string) {
+  const [pedidos, setPedidos] = useState<PedidoComStatus[]>(() => listarPedidos().filter((p) => p.slug === slug))
 
   useEffect(() => {
     let cancelado = false
     let intervalo = 0
     const atualizar = async () => {
-      const lista = listarPedidos()
+      const lista = listarPedidos().filter((p) => p.slug === slug)
       const recentes = lista.filter((p) => Date.now() - new Date(p.criado_em).getTime() < UM_DIA).slice(0, 5)
       const status = await Promise.all(
         recentes.map(async (p) => {
@@ -44,7 +44,7 @@ export function usePedidosSalvos() {
       cancelado = true
       window.clearInterval(intervalo)
     }
-  }, [])
+  }, [slug])
 
   return pedidos
 }
