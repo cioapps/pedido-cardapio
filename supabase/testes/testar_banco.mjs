@@ -381,6 +381,23 @@ await teste('ao sair, remove o celular', async () => {
   await comoUsuario(A, `select remover_dispositivo('${TOKEN}')`)
   espera((await db.query('select count(*)::int n from dispositivos_lojista')).rows[0].n === 0, 'não removeu')
 })
+await teste('uso_empresas_admin: conta pedidos da loja, cancelados à parte', async () => {
+  const u = (await comoUsuario(ADMIN, 'select * from uso_empresas_admin()')).rows.find((x) => Number(x.id_empresa) === idLoja)
+  const e = (await db.query(`select count(*) filter (where status_pedido <> 'cancelado')::int n,
+     count(*) filter (where status_pedido = 'cancelado')::int c from pedidos where id_empresa=${idLoja}`)).rows[0]
+  espera(u && u.pedidos_30d === e.n && u.pedidos_hoje === e.n && u.cancelados_30d === e.c, `uso ${JSON.stringify(u)} vs ${JSON.stringify(e)}`)
+  espera(u.pedidos_cardapio_30d + u.pedidos_whatsapp_30d === u.pedidos_30d, 'origens não somam')
+  espera(u.ultimo_pedido_em, 'sem último pedido')
+})
+await teste('pedidos_recentes_admin: sem telefone/endereço; só admin', async () => {
+  const r = (await comoUsuario(ADMIN, `select * from pedidos_recentes_admin(5, ${idLoja})`)).rows
+  espera(r.length > 0 && r.every((p) => Number(p.id_empresa) === idLoja), 'filtro de loja')
+  espera(!('telefone_cliente' in r[0]) && !('logradouro' in r[0]), 'expôs dado do cliente')
+  espera(!r[0].primeiro_nome.includes(' '), `nome completo: ${r[0].primeiro_nome}`)
+  await esperaErro(() => comoUsuario(A, 'select * from pedidos_recentes_admin()'), 'Apenas administradores')
+  await esperaErro(() => comoUsuario(A, 'select * from uso_empresas_admin()'), 'Apenas administradores')
+  await esperaErro(() => comoAnon('select * from pedidos_recentes_admin()'), 'permission denied')
+})
 
 console.log(`\n${ok} ok, ${falhas} falha(s)`)
 process.exit(falhas ? 1 : 0)
