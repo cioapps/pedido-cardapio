@@ -318,16 +318,21 @@ function Finalizar({
   const taxa = Number(bairro?.taxa_entrega ?? 0)
   const total = carrinho.subtotal + taxa
 
-  /** Leva um endereço salvo para o formulário (para corrigir ou escolher o bairro) */
+  /**
+   * Leva um endereço salvo para o formulário (para corrigir ou escolher o bairro).
+   * Bairro fora da lista desta loja: o original continua salvo como está (ele serve na
+   * loja onde foi cadastrado) e o pedido aqui gera uma cópia com o bairro desta loja.
+   */
   const editarEndereco = (e: EnderecoSalvo) => {
+    const bairroAqui = bairroDaLoja(e.nome_bairro, bairros)
     setForm({
       logradouro: e.logradouro,
       numero_endereco: e.numero_endereco,
       complemento: e.complemento,
       ponto_referencia: e.ponto_referencia,
-      id_bairro_entrega: bairroDaLoja(e.nome_bairro, bairros)?.id ?? null,
+      id_bairro_entrega: bairroAqui?.id ?? null,
     })
-    setIdEditando(e.id)
+    setIdEditando(e.nome_bairro && !bairroAqui ? null : e.id)
     setEscolha('novo')
   }
 
@@ -524,15 +529,14 @@ function Finalizar({
                       key={e.id}
                       className={`rounded-2xl border-2 p-3.5 transition ${
                         marcado ? 'border-loja bg-loja-suave' : 'border-zinc-200'
-                      } ${situacao === 'fora_da_area' ? 'opacity-60' : ''}`}
+                      } ${situacao === 'fora_da_area' ? 'border-dashed' : ''}`}
                     >
                       <button
                         type="button"
                         role="radio"
                         aria-checked={marcado}
-                        disabled={situacao === 'fora_da_area'}
-                        onClick={() => (situacao === 'sem_bairro' ? editarEndereco(e) : setEscolha(e.id))}
-                        className="flex w-full items-start gap-3 text-left disabled:cursor-not-allowed"
+                        onClick={() => (situacao === 'ok' ? setEscolha(e.id) : editarEndereco(e))}
+                        className="flex w-full items-start gap-3 text-left"
                       >
                         <span
                           className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border-2 ${
@@ -554,7 +558,8 @@ function Finalizar({
                             {situacao === 'ok' &&
                               `${e.nome_bairro} · entrega ${Number(taxaBairro) > 0 ? formatarMoeda(taxaBairro) : 'grátis'}`}
                             {situacao === 'sem_bairro' && 'Toque para escolher o bairro'}
-                            {situacao === 'fora_da_area' && `${e.nome_bairro} · esta loja não entrega aqui`}
+                            {situacao === 'fora_da_area' &&
+                              `${e.nome_bairro} não está na lista desta loja · toque para escolher o bairro`}
                           </span>
                         </span>
                       </button>
